@@ -27,7 +27,7 @@ export function activate(context: vscode.ExtensionContext) {
         }
 
         const selectedFunction = await vscode.window.showQuickPick(
-            functions.map(fn => ({ label: fn.name, detail: fn.signature, fn })),
+            functions.map(fn => ({ label: fn.name, body: fn.full, fn })),
             { placeHolder: 'Select a function to copy' }
         );
 
@@ -48,67 +48,83 @@ async function getFunctionsFromDocument(document: vscode.TextDocument) {
         document.uri
     );
 
-    return symbols
-        ? symbols
-              .filter(sym => sym.kind === vscode.SymbolKind.Function || sym.kind === vscode.SymbolKind.Method)
-              .map(fn => ({
-                  name: fn.name,
-                  range: fn.range,
-                  signature: document.getText(new vscode.Range(fn.range.start, fn.range.end)),
-              }))
-        : [];
+    let functions: { name: string; range: vscode.Range; full: string }[] = [];
+
+    function extractFunctions(symbols: vscode.DocumentSymbol[], currentClass?: string) {
+        for (const sym of symbols) {
+            if (sym.kind === vscode.SymbolKind.Class) {
+                // Recursively process class children, passing class name as context
+                extractFunctions(sym.children, sym.name);
+            } else if (sym.kind === vscode.SymbolKind.Function || sym.kind === vscode.SymbolKind.Method) {
+                functions.push({
+                    name: currentClass ? `${currentClass}.${sym.name}` : sym.name, // Prefix with class if applicable
+                    range: sym.range,
+                    full: document.getText(new vscode.Range(sym.range.start, sym.range.end)),
+                });
+            }
+        }
+    }
+
+    if (symbols) {
+        extractFunctions(symbols); // Recursively extract methods/functions
+    }
+
+    return functions;
 }
+
 
 async function getUserPreferredFormat() {
     const config = vscode.workspace.getConfiguration('functionCopy');
     return config.get<string>('format', 'signature');
 }
 
-function formatFunction(fn: { name: string; signature: string }, format: string): string {
+function formatFunction(fn: { name: string; full: string }, format: string): string {
     const config = vscode.workspace.getConfiguration('functionCopy');
     const template = config.get<string>('customTemplate', '{name}({params})');
 
+	console.log("format string:", format);
+	console.log("format template:", template);
     if (format === 'signature') {
-        return fn.signature.split('{')[0].trim(); // Extract only function signature
+        return fn.full.split('{')[0].trim(); // Extract only function signature
     } else if (format === 'body') {
-        return fn.signature.split('{').slice(1).join('{').trim(); // Extract body only
+        return fn.full.split('{').slice(1).join('{').trim(); // Extract body only
     } else {
         return template
             .replace('{name}', fn.name)
-            .replace('{params}', fn.signature.match(/\((.*?)\)/)?.[1] || '')
-            .replace('{body}', fn.signature);
+            .replace('{params}', fn.full.match(/\((.*?)\)/)?.[1] || '')
+            .replace('{full}', fn.full);
     }
 }
 
-export class FunctionTreeProvider implements vscode.TreeDataProvider<FunctionItem> {
-    private _onDidChangeTreeData = new vscode.EventEmitter<FunctionItem | undefined>();
-    readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
+// export class FunctionTreeProvider implements vscode.TreeDataProvider<FunctionItem> {
+//     private _onDidChangeTreeData = new vscode.EventEmitter<FunctionItem | undefined>();
+//     readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
 
-    constructor(private workspaceRoot: string) {}
+//     constructor(private workspaceRoot: string) {}
 
-    refresh(): void {
-        this._onDidChangeTreeData.fire(undefined);
-    }
+//     refresh(): void {
+//         this._onDidChangeTreeData.fire(undefined);
+//     }
 
-    async getChildren(): Promise<FunctionItem[]> {
-        const editor = vscode.window.activeTextEditor;
-        if (!editor) return [];
+//     async getChildren(): Promise<FunctionItem[]> {
+//         const editor = vscode.window.activeTextEditor;
+//         if (!editor) return [];
 
-        const functions = await getFunctionsFromDocument(editor.document);
-        return functions.map(fn => new FunctionItem(fn.name, fn.signature));
-    }
+//         const functions = await getFunctionsFromDocument(editor.document);
+//         return functions.map(fn => new FunctionItem(fn.name, fn.full));
+//     }
 
-    getTreeItem(element: FunctionItem): vscode.TreeItem {
-        return element;
-    }
-}
+//     getTreeItem(element: FunctionItem): vscode.TreeItem {
+//         return element;
+//     }
+// }
 
-class FunctionItem extends vscode.TreeItem {
-    constructor(public readonly label: string, public readonly signature: string) {
-        super(label, vscode.TreeItemCollapsibleState.None);
-        this.command = { command: 'extension.copyFunction', title: 'Copy Function', arguments: [this.signature] };
-    }
-}
+// class FunctionItem extends vscode.TreeItem {
+//     constructor(public readonly label: string, public readonly full: string) {
+//         super(label, vscode.TreeItemCollapsibleState.None);
+//         this.command = { command: 'extension.copyFunction', title: 'Copy Function', arguments: [] };
+//     }
+// }
 
 
 // This method is called when your extension is deactivated
