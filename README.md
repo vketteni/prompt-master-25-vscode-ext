@@ -47,7 +47,7 @@ This extension contributes the following settings:
 
 ### 0.0.2
 
-- Added more readable README.md.
+- Added this README.md.
 
 ## Contributing
 
