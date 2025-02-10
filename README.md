@@ -45,6 +45,10 @@ This extension contributes the following settings:
 
 - Initial release with function extraction and copy support.
 
+### 0.0.2
+
+- Added more readable README.md.
+
 ## Contributing
 
 Contributions welcome! Feel free to submit issues and pull requests on **GitHub**.

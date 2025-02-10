@@ -2,7 +2,7 @@
 	"name": "prompt-master-25",
 	"displayName": "prompt-master-25",
 	"description": "enables smart workflows for better prompt creations",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"repository": {
 	  "type": "git",
 	  "url": "https://github.com/vketteni/prompt-master-25.git"
