@@ -1,71 +1,80 @@
-# prompt-master-25 README
+prompt-master-25 README
 
-This is the README for your extension "prompt-master-25". After writing up a brief description, we recommend including the following sections.
+Overview
 
-## Features
+prompt-master-25 is a Visual Studio Code extension that provides a fast and reliable way to copy function signatures and bodies in customizable formats. This extension makes it easy to extract function details, including class methods, and efficiently retrieve them for quick reference.
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+Features
 
-For example if there is an image subfolder under your extension project workspace:
+Function Extraction: Automatically detects all functions and methods in a file.
 
-\!\[feature X\]\(images/feature-x.png\)
+Quick Pick Menu: Easily search and copy function details.
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+Class-Aware Method Listing: Methods now display their ClassName.methodName format for better identification.
 
-## Requirements
+Customizable Copy Format: Configure function copy settings via VS Code settings.
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+Supports Multiple Languages: Works with Python, JavaScript, TypeScript, and more.
 
-## Extension Settings
+Screenshot
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+!
 
-For example:
+Requirements
+
+Visual Studio Code v1.60.0+
+
+A supported language server (e.g., Pylance for Python, TypeScript for JS/TS)
+
+Extension Settings
 
 This extension contributes the following settings:
 
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
+prompt-master-25.format: Defines the format for copied functions. Options:
 
-## Known Issues
+signature: Copy only the function signature.
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+body: Copy only the function body.
 
-## Release Notes
+full: Copy the entire function.
 
-Users appreciate release notes as you update your extension.
+prompt-master-25.customTemplate: Allows defining a custom format using {name}, {params}, and {body} placeholders.
 
-### 1.0.0
+Usage
 
-Initial release of ...
+Open a file containing functions or class methods.
 
-### 1.0.1
+Use the command prompt-master-25.copyFunction to open the quick function list (Ctrl+Shift+P → "Copy Function").
 
-Fixed issue #.
+Select a function to copy it to the clipboard.
 
-### 1.1.0
+Paste the function anywhere you need it.
 
-Added features X, Y, and Z.
+Known Issues
 
----
+Class methods may not be detected if the language server does not provide nested symbols.
 
-## Following extension guidelines
+May not work with all VS Code-supported languages; tested primarily with Python and JavaScript.
 
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
+Release Notes
 
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
+0.0.1
 
-## Working with Markdown
+Initial release with function extraction and copy support.
 
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
+Contributing
 
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
+Contributions welcome! Feel free to submit issues and pull requests on GitHub.
 
-## For more information
+Extension Guidelines
 
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
+Ensure you follow VS Code Extension Guidelines for best practices.
 
-**Enjoy!**
+Additional Resources
+
+VS Code API Documentation
+
+Markdown Syntax Reference
+
+Enjoy using prompt-master-25! 🚀
+

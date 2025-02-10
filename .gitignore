@@ -43,3 +43,5 @@ build/
 
 # NPM shrinkwrap (if not using it explicitly)
 npm-shrinkwrap.json
+
+*.vsix
